@@ -12,7 +12,7 @@
 - Provider: AWS
 - Bucket name and region are defined as variables in `variables.tf`
 
-## 🚀 Usage
+## Usage
 
 ### Prerequisites
 
