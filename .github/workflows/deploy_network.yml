@@ -46,8 +46,8 @@ jobs:
         working-directory: network
         run: terraform init
       - name: Terraform Plan
-        working-directory: network
-        run: terraform plan \
+        # working-directory: network
+        run: terraform -chdir=network plan \
             -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
             -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
             -var="key_name=${{ secrets.KEY_NAME }}"
@@ -75,8 +75,8 @@ jobs:
         working-directory: network
         run: terraform init
       - name: Terraform Apply
-        working-directory: network
-        run: terraform apply -auto-approve \
+        # working-directory: network
+        run: terraform -chdir=network apply -auto-approve \
             -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
             -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
             -var="key_name=${{ secrets.KEY_NAME }}"
@@ -104,8 +104,8 @@ jobs:
         working-directory: network
         run: terraform init
       - name: Terraform Destroy
-        working-directory: network
-        run: terraform destroy -auto-approve \
+        # working-directory: network
+        run: terraform -chdir=network destroy -auto-approve \
             -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
             -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
             -var="key_name=${{ secrets.KEY_NAME }}"
