@@ -4,7 +4,7 @@ resource "aws_eip" "nat_eip" {
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet[0].id
+  subnet_id     = aws_subnet.public[0].id
   tags = {
     Name = "nat-gateway"
   }
@@ -24,7 +24,7 @@ resource "aws_route_table" "private_rt" {
 }
 
 resource "aws_route_table_association" "private_assoc" {
-  count          = length(aws_subnet.private_subnet)
-  subnet_id      = aws_subnet.private_subnet[count.index].id
+  count          = length(aws_subnet.private)
+  subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private_rt.id
 }
