@@ -1,4 +1,4 @@
-name: Terraform
+name: Deploy network infrastructure
 
 on:
   push:
@@ -47,7 +47,10 @@ jobs:
         run: terraform init
       - name: Terraform Plan
         working-directory: network
-        run: terraform plan
+        run: terraform plan \
+            -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+            -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
+            -var="key_name=${{ secrets.KEY_NAME }}"
 
   terraform-apply:
     name: Terraform Apply
@@ -73,7 +76,10 @@ jobs:
         run: terraform init
       - name: Terraform Apply
         working-directory: network
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve \
+            -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+            -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
+            -var="key_name=${{ secrets.KEY_NAME }}"
 
 
   terraform-destroy:
@@ -99,4 +105,7 @@ jobs:
         run: terraform init
       - name: Terraform Destroy
         working-directory: network
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve \
+            -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+            -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
+            -var="key_name=${{ secrets.KEY_NAME }}"
