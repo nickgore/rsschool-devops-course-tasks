@@ -1,29 +1,47 @@
 # rsschool-devops-course-tasks
 
-## Infrastructure Setup
+## Network Infrastructure Setup (TASK 2)
 
-### S3 Bucket
 
-- Bucket is defined using Terraform with versioning enabled.
-- Encryption applied: `AES256`.
+### Components
 
-### Terraform Configuration
+1. **VPC**
+2. **Subnets**
 
-- Provider: AWS
-- Bucket name and region are defined as variables in `variables.tf`
+   * Public Subnets (2 across different AZs) in `network/subnets.tf`.
+   * Private Subnets (2 across different AZs) in `network/subnets.tf`.
 
-## Usage
+3. **Internet Gateway**
+4. **Route Tables**
+
+   * Public route table in `network/route_tables.tf`.
+   * Private route table & NAT Gateway in `network/nat.tf` to enable private-to-Internet traffic.
+
+5. **Security**
+
+   * Security Groups in `network/security_groups.tf`:
+
+     * `bastion_sg` for SSH access to bastion host.
+     * `private_sg` for internal and outbound traffic from private subnets.
+
+6. **Bastion Host**
+   * EC2 instance in a public subnet defined in `network/bastion.tf`.
+   * Provides secure SSH access to private subnet instances.
 
 ### Prerequisites
+Provide actual values via `network/terraform.tfvars` or GitHub Secrets in CI:
 
-- Terraform CLI installed locally
-- AWS CLI configured with IAM user with sufficient permissions
-- For github actions: Corresponding role and identity provider configured in AWS Console
+```hcl
+your_ip_cidr   = "0.0.0.0/0"         # For testing only
+bastion_ami_id = "ami-03caf91bb3d81b843"
+key_name       = "test-key"
+```
 
 ### Running Terraform Locally
 
 ```bash
+cd network
 terraform init
-terraform plan
-terraform apply
+terraform plan -var-file="terraform.tfvars"
+terraform apply -auto-approve -var-file="terraform.tfvars"
 ```
