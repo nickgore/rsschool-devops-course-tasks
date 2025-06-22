@@ -9,6 +9,8 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  TF_DIR: network
 
 jobs:
   terraform-check:
@@ -42,15 +44,13 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-      - name: Terraform Init
-        working-directory: network
-        run: terraform init
-      - name: Terraform Plan
-        # working-directory: network
-        run: terraform -chdir=network plan \
-            -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
-            -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
-            -var="key_name=${{ secrets.KEY_NAME }}"
+      - name: Terraform Init & Plan
+        run: |
+            terraform -chdir=$TF_DIR init
+            terraform -chdir=$TF_DIR plan \
+                -var "your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var "bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
+                -var "key_name=${{ secrets.KEY_NAME }}"
 
   terraform-apply:
     name: Terraform Apply
@@ -71,15 +71,13 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-      - name: Terraform Init
-        working-directory: network
-        run: terraform init
-      - name: Terraform Apply
-        # working-directory: network
-        run: terraform -chdir=network apply -auto-approve \
-            -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
-            -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
-            -var="key_name=${{ secrets.KEY_NAME }}"
+      - name: Terraform Init and Apply
+        run: |
+            terraform -chdir=$TF_DIR init
+            terraform -chdir=$TF_DIR apply -auto-approve \
+                -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
+                -var="key_name=${{ secrets.KEY_NAME }}"
 
 
   terraform-destroy:
@@ -100,12 +98,10 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-      - name: Terraform Init
-        working-directory: network
-        run: terraform init
-      - name: Terraform Destroy
-        # working-directory: network
-        run: terraform -chdir=network destroy -auto-approve \
-            -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
-            -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
-            -var="key_name=${{ secrets.KEY_NAME }}"
+      - name: Terraform Init and Destroy
+        run: |
+            terraform -chdir=$TF_DIR init
+            terraform -chdir=$TF_DIR destroy -auto-approve \
+                -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
+                -var="key_name=${{ secrets.KEY_NAME }}"
