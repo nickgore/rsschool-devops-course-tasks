@@ -17,12 +17,15 @@
    * Public route table in `network/route_tables.tf`.
    * Private route table & NAT Gateway in `network/nat.tf` to enable private-to-Internet traffic.
 
+
 5. **Security**
 
    * Security Groups in `network/security_groups.tf`:
 
      * `bastion_sg` for SSH access to bastion host.
      * `private_sg` for internal and outbound traffic from private subnets.
+    
+   * Network ACL in `network/network_acls.tf`.
 
 6. **Bastion Host**
    * EC2 instance in a public subnet defined in `network/bastion.tf`.
