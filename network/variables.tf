@@ -25,11 +25,6 @@ variable "your_ip_cidr" {
   type        = string
 }
 
-variable "bastion_ami_id" {
-  description = "AMI ID for bastion host"
-  type        = string
-}
-
 variable "key_name" {
   description = "SSH key name"
   type        = string

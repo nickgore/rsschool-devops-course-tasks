@@ -49,7 +49,6 @@ jobs:
             terraform -chdir=$TF_DIR init
             terraform -chdir=$TF_DIR plan \
                 -var "your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
-                -var "bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
                 -var "key_name=${{ secrets.KEY_NAME }}"
 
   terraform-apply:
@@ -76,7 +75,6 @@ jobs:
             terraform -chdir=$TF_DIR init
             terraform -chdir=$TF_DIR apply -auto-approve \
                 -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
-                -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
                 -var="key_name=${{ secrets.KEY_NAME }}"
 
 
@@ -103,5 +101,4 @@ jobs:
             terraform -chdir=$TF_DIR init
             terraform -chdir=$TF_DIR destroy -auto-approve \
                 -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
-                -var="bastion_ami_id=${{ secrets.BASTION_AMI_ID }}" \
                 -var="key_name=${{ secrets.KEY_NAME }}"
