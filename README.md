@@ -2,7 +2,6 @@
 
 ## Network Infrastructure Setup (TASK 2)
 
-
 ### Components
 
 1. **VPC**
@@ -36,7 +35,6 @@ Provide actual values via `network/terraform.tfvars` or GitHub Secrets in CI:
 
 ```hcl
 user_ip_cidr   = "0.0.0.0/0"         # For testing only
-bastion_ami_id = "ami-03caf91bb3d81b843"
 key_name       = "test-key"
 ```
 
