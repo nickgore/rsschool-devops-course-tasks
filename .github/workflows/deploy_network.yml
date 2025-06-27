@@ -1,0 +1,104 @@
+name: Deploy network infrastructure
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  TF_DIR: network
+
+jobs:
+  terraform-check:
+    name: Terraform Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.2
+      - name: Terraform fmt check
+        working-directory: network
+        run: terraform fmt -check
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: terraform-check
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Terraform Init & Plan
+        run: |
+            terraform -chdir=$TF_DIR init
+            terraform -chdir=$TF_DIR plan \
+                -var "user_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var "key_name=${{ secrets.KEY_NAME }}"
+
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+    permissions:
+      id-token: write
+      contents: read
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Terraform Init and Apply
+        run: |
+            terraform -chdir=$TF_DIR init
+            terraform -chdir=$TF_DIR apply -auto-approve \
+                -var="user_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var="key_name=${{ secrets.KEY_NAME }}"
+
+
+  terraform-destroy:
+    name: Terraform Destroy (Manual)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'  # Only runs when triggered manually
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Terraform Init and Destroy
+        run: |
+            terraform -chdir=$TF_DIR init
+            terraform -chdir=$TF_DIR destroy -auto-approve \
+                -var="user_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var="key_name=${{ secrets.KEY_NAME }}"
