@@ -48,7 +48,7 @@ jobs:
         run: |
             terraform -chdir=$TF_DIR init
             terraform -chdir=$TF_DIR plan \
-                -var "your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var "user_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
                 -var "key_name=${{ secrets.KEY_NAME }}"
 
   terraform-apply:
@@ -74,7 +74,7 @@ jobs:
         run: |
             terraform -chdir=$TF_DIR init
             terraform -chdir=$TF_DIR apply -auto-approve \
-                -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var="user_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
                 -var="key_name=${{ secrets.KEY_NAME }}"
 
 
@@ -100,5 +100,5 @@ jobs:
         run: |
             terraform -chdir=$TF_DIR init
             terraform -chdir=$TF_DIR destroy -auto-approve \
-                -var="your_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
+                -var="user_ip_cidr=${{ secrets.YOUR_IP_CIDR }}" \
                 -var="key_name=${{ secrets.KEY_NAME }}"

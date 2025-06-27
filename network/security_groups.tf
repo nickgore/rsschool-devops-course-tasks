@@ -4,11 +4,19 @@ resource "aws_security_group" "bastion_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "SSH from your IP"
+    description = "SSH access from user CIDR"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.your_ip_cidr]
+    cidr_blocks = [var.user_ip_cidr]
+  }
+
+  ingress {
+    description = "All traffic from the VPC"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.vpc_cidr]
   }
 
   egress {
@@ -25,11 +33,19 @@ resource "aws_security_group" "private_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "Allow all from VPC"
+    description     = "SSH access from bastion host"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion_sg.id]
+  }
+
+  ingress {
+    description = "All traffic from the VPC"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    cidr_blocks = [var.vpc_cidr]
   }
 
   egress {
@@ -38,4 +54,6 @@ resource "aws_security_group" "private_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  depends_on = [aws_security_group.bastion_sg]
 }

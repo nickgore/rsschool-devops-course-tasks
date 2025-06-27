@@ -20,7 +20,7 @@ variable "availability_zones" {
   default = ["eu-north-1a", "eu-north-1b"]
 }
 
-variable "your_ip_cidr" {
+variable "user_ip_cidr" {
   description = "Your IP address in CIDR format (e.g. 1.2.3.4/32)"
   type        = string
 }
